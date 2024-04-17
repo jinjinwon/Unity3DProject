@@ -369,6 +369,8 @@
 "Assets/Scripts/NavMesh/SimpleDynamicAgent.cs"
 "Assets/Scripts/Public/Singleton.cs"
 "Assets/Scripts/Public/Utils.cs"
+"Assets/Scripts/Study/StudySingleton.cs"
+"Assets/Scripts/Study/Study_04_17.cs"
 "Assets/Scripts/UI/UIManager.cs"
 -langversion:9.0
 

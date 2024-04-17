@@ -61,6 +61,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Scripts\NavMesh\BaseAgent.cs" />
+    <Compile Include="Assets\Scripts\Study\Study_04_17.cs" />
     <Compile Include="Assets\Scripts\Public\Utils.cs" />
     <Compile Include="Assets\Scripts\Character\Character.cs" />
     <Compile Include="Assets\Scripts\Camera\CameraController.cs" />
@@ -69,6 +70,7 @@
     <Compile Include="Assets\Scripts\NavMesh\InputAgent.cs" />
     <Compile Include="Assets\Scripts\Character\PC.cs" />
     <Compile Include="Assets\Scripts\NavMesh\SimpleDynamicAgent.cs" />
+    <Compile Include="Assets\Scripts\Study\StudySingleton.cs" />
     <Compile Include="Assets\Scripts\UI\UIManager.cs" />
     <Compile Include="Assets\Scripts\NavMesh\PointerAgent.cs" />
   </ItemGroup>

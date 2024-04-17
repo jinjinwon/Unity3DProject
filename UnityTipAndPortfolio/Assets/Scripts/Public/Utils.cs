@@ -837,4 +837,12 @@ namespace JJW_Utils
             Debug.Log("Cur Memory : " + GC.GetTotalMemory(false));
         }
     }
+
+    /// <summary>
+    /// 알고리즘이 필요한 경우에 사용하도록 함수로 정리한 클래스입니다.
+    /// </summary>
+    public class Algorithm_Utils
+    {
+
+    }
 }
