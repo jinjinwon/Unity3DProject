@@ -1,7 +1,16 @@
+using JJW_Utils;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.InputSystem;
+
+public abstract class Algorithm
+{
+    public abstract void Main(bool play);
+    public abstract void OnShow(string str);
+}
 
 public class Study_04_17 : MonoBehaviour
 {
@@ -14,26 +23,40 @@ public class Study_04_17 : MonoBehaviour
 
     private SumAlgorithm sumAlgorithm;
     private ArithmmeticSequence arithmmeticSequence;
+    private CountAlgorithm countAlgorithm;
+    private PrimeNumberAlgorithm primeNumberAlgorithm;
+    private PrimeNumberCountAlgorithm primeNumberCountAlgorithm;
+    private PerfectNumberAlgorithm perfectNumberAlgorithm;
 
     private void Awake()
     {
-        //sumAlgorithm = new SumAlgorithm();
+        sumAlgorithm = new SumAlgorithm();
         arithmmeticSequence = new ArithmmeticSequence();
+        countAlgorithm = new CountAlgorithm();
+        primeNumberAlgorithm = new PrimeNumberAlgorithm();
+        primeNumberCountAlgorithm = new PrimeNumberCountAlgorithm();
+        perfectNumberAlgorithm = new PerfectNumberAlgorithm();
     }
 
     private void Start()
     {
-        if (sumAlgorithm != null) sumAlgorithm.Main();
-        if (arithmmeticSequence != null) arithmmeticSequence.Main();
+        sumAlgorithm?.Main(false);
+        arithmmeticSequence?.Main(false);
+        countAlgorithm?.Main(false);
+        primeNumberAlgorithm?.Main(false);
+        primeNumberCountAlgorithm?.Main(false);
+        perfectNumberAlgorithm?.Main(true);
     }
 }
 
-public class SumAlgorithm
+public class SumAlgorithm : Algorithm
 {
-    /// 합계 알고리즘
-    
-    public void Main()
+    /// 합계 알고리즘 
+    public override void Main(bool play)
     {
+        if (play == false)
+            return;
+
         // [1] Input
         int[] scores = {100, 25, 39, 48, 88};
 
@@ -62,17 +85,25 @@ public class SumAlgorithm
 
         // [3] Output
         string strExpain = $"{scores.Length} 명의 점수 중 80점 이상의 총점은 {total}";
-        Debug.Log(strExpain);
-        StudySingleton.Instance.OnShow(strExpain);
+        OnShow(strExpain);
+    }
+
+    public override void OnShow(string str)
+    {
+        UnityEngine.Debug.Log(str);
+        StudySingleton.Instance.OnShow(str);
     }
 }
 
-public class ArithmmeticSequence
+public class ArithmmeticSequence : Algorithm
 {
     // 등차수열 알고리즘 : 연속하는 두 수의 차이가 일정한 수열
 
-    public void Main()
+    public override void Main(bool play)
     {
+        if (play == false)
+            return;
+
         // [1] input
         var Sum = 0;
 
@@ -96,7 +127,280 @@ public class ArithmmeticSequence
 
         // [3] output
         string strExpain = $"1부터 20까지의 정수 중 홀수의 합은 ? {Sum}";
-        Debug.Log(strExpain);
-        StudySingleton.Instance.OnShow(strExpain);
+        OnShow(strExpain);
+    }
+
+    public override void OnShow(string str)
+    {
+        UnityEngine.Debug.Log(str);
+        StudySingleton.Instance.OnShow(str);
+    }
+}
+
+public class CountAlgorithm : Algorithm
+{
+    // 개수 알고리즘
+    public override void Main(bool play)
+    {
+        if (play == false)
+            return;
+
+        // [1] input
+        int icount = 0;
+
+        // [2] process
+
+        // 내 풀이
+        for(int i = 1; i <= 1000; i++)
+        {
+            if (i % 13 == 0)
+                icount++;
+        }
+
+        // _ -> 구분용으로 넣음
+        // 1_000 = 1000 1000 = 1000 1____000 = 1000 모두 똑같음
+
+        // 강사 풀이 1 (Linq 사용 Where 사용)
+        var numbers = Enumerable.Range(1, 1_000).ToArray().Where(n => n % 13 == 0).Count();     // 1부터 1~1000개의 배열을 생성
+
+        // 강사 풀이 2 (Linq 사용 Where 미사용)
+        var numbers2 = Enumerable.Range(1, 1_000).ToArray().Count(n => n % 13 == 0);
+
+        // 강사 풀이 3 (Linq 미사용)
+        var numbers3 = Enumerable.Range(1, 1_000).ToArray();
+
+        for(int i = numbers3.Min(); i < numbers3.Max(); i++)
+        {
+            if (numbers3[i] % 13 == 0)
+            {
+                icount++;
+            }
+        }
+
+        // [3] output
+        string strExpain = $"1부터 1000까지의 정수 중 13의 배수의 개수는 ? {icount}";
+        OnShow(strExpain);
+    }
+
+    public override void OnShow(string str)
+    {
+        UnityEngine.Debug.Log(str);
+        StudySingleton.Instance.OnShow(str);
+    }
+}
+
+public class PrimeNumberAlgorithm : Algorithm
+{
+    // 소수 알고리즘
+    public override void Main(bool play)
+    {
+        if (play == false) 
+            return;
+
+        // [1] input 2 3 5 7 11 13 17 19 23 29 ...
+        int input = 2;
+        bool result = false;
+
+        // [2] process
+
+        // 내 풀이 (약수로 계산)
+        result = Prime(input);
+
+        // 강사 풀이(2부터 n까지 나누어 떨어지는 수가 발생할 때까지 반복)
+        var i = 1;
+        do
+        {
+            i++;
+        }
+        while (input % i != 0);
+
+        if (input == i)
+            result = true;
+        else
+            result = false;
+
+        // [3] output
+        string strexpain2 = result == true ? "맞습니다." : "아닙니다.";
+        string streExpain = $"입력한 숫자인 {input}은 소수가 {strexpain2}";
+        OnShow(streExpain);
+    }
+
+    private bool Prime(int input)
+    {
+        if (input == 1)
+            return false;
+
+        for (int q = 2; q * q <= input; q++)
+        {
+            if (input % q == 0)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public override void OnShow(string str)
+    {
+        UnityEngine.Debug.Log(str);
+        StudySingleton.Instance.OnShow(str);
+    }
+}
+
+public class PrimeNumberCountAlgorithm : Algorithm
+{
+    // 소수의 개수를 구하는 알고리즘
+    public override void Main(bool play)
+    {
+        if(play == false) return;
+
+        // [1] input
+        int input = 100;
+        List<int> list_primeNumber = new List<int>();
+
+        // 강사 input
+        var count = 0;  // 소수 개수
+        var sw = true;  // 소수인지를 확인하는 스위치 변수
+
+        // [2] process
+
+        // 내 풀이
+        list_primeNumber = PrimeList(input);
+
+        // 강사 풀이
+        for (int i = 2; i < input; i++)
+        {
+            sw = true; // 일단은 모든 반복마다 소수로 놓고 시작
+
+            // 2부터 현재수(i) - 1 까지 나누었을 때 나누어 떨어지면 소수가 아니다.
+            for (int j = 2; j < i; j++)
+            {
+                if (i % j == 0)
+                {
+                    sw = false;
+                    break;
+                }
+            }
+
+            if (sw == true)
+            {
+                list_primeNumber.Add(i);
+                count++;
+            }
+        }
+
+        // [3] output
+        string strExpain = "";
+
+        for(int p = 0; p < list_primeNumber.Count; p++)
+        {
+            strExpain += list_primeNumber[p] + ",";
+        }
+        OnShow(strExpain);
+    }
+
+    private List<int> PrimeList(int input)
+    {
+        List<int> list_primenumber = new List<int>();
+
+        for(int i = 1; i <= input; i++)
+        {
+            if(Prime(i) == true)
+            {
+                list_primenumber.Add(i);
+            }
+        }
+        return list_primenumber;
+    }
+
+    private bool Prime(int input)
+    {
+        if (input == 1)
+            return false;
+
+        for (int q = 2; q * q <= input; q++)
+        {
+            if (input % q == 0)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public override void OnShow(string str)
+    {
+        UnityEngine.Debug.Log(str);
+        StudySingleton.Instance.OnShow(str);
+    }
+}
+
+public class PerfectNumberAlgorithm : Algorithm
+{
+    // 완전수 알고리즘
+    public override void Main(bool play)
+    {
+        // [1] input
+        int sum = 0; // 약수의 합계
+        int cnt = 0; // 완전수의 개수
+        int max = 0; // 완전수 중 가장 큰 값 (가장 큰 약수)
+        int rem = 0; // 나머지 값 임시 보관
+
+        // [2] process
+
+        // 내 풀이
+        for(int i = 1; i <= 10000; i++)
+        {
+            sum = 0;
+
+            // 절반 초과의 값은 약수가 될 수 없음 ㅇㅇ;
+            for (int j = 1; j <= i / 2; j++)
+            {
+                if (i % j == 0)
+                {
+                    sum+=j;
+                }
+            }
+
+            // 완전수가 되려면 약수인 j의 값을 전부 더한 경우에 값이 같아야 함 ㅇㅇ;
+            if(i == sum)
+            {
+                cnt++;
+
+                if(max < i)
+                    max = i;
+            }           
+        }
+
+        // 강사 풀이
+        for (int q = 1; q < 10000; q++)
+        {
+            sum = 0;     // 매 반복마다 초기화
+            max = q / 2; // 모든 짝수를 2로 나누면 가장 큰 약수
+
+            for (int w = 1; w <= max; w++)
+            {
+                rem = q - (q / w) * w; // 원본 수 / 약수
+                if(rem == 0)
+                {
+                    sum += w; // 약수의 합계
+                }
+            }
+
+            if(q == sum) // 자신 == 약수의 합계 (완전수)
+            {
+                cnt++;
+            }
+        }
+
+        // [3] output (강사 풀이로하면 가장 큰 값이 4999로 나옴 ㅇㅇ 멈추는게 없어서 계속 돌다가 마지막 수를 보여준다)
+        string strExpain = $"완전수의 개수는 {cnt} \n 완전수 중 가장 큰 값은 {max}";
+        OnShow(strExpain);
+    }
+
+    public override void OnShow(string str)
+    {
+        UnityEngine.Debug.Log(str);
+        StudySingleton.Instance.OnShow(str);
     }
 }
