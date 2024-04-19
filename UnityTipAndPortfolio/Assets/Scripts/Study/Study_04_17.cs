@@ -1,10 +1,12 @@
 using JJW_Utils;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Debug = UnityEngine.Debug;
 
 public abstract class Algorithm
 {
@@ -27,6 +29,12 @@ public class Study_04_17 : MonoBehaviour
     private PrimeNumberAlgorithm primeNumberAlgorithm;
     private PrimeNumberCountAlgorithm primeNumberCountAlgorithm;
     private PerfectNumberAlgorithm perfectNumberAlgorithm;
+    private AverageAlgorithm averageAlgorithm;
+    private AverageCountAlgorithm averageCountAlgorithm;
+    private ArraySumAverageAlgorithm arraySumAverageAlgorithm;
+    private MaxAlgorithm maxAlgorithm;
+    private MinAlgorithm minAlgorithm;
+    private AverageExceptMaxAndMinAlgorithm averageExceptMaxAndMinAlgorithm;
 
     private void Awake()
     {
@@ -36,6 +44,12 @@ public class Study_04_17 : MonoBehaviour
         primeNumberAlgorithm = new PrimeNumberAlgorithm();
         primeNumberCountAlgorithm = new PrimeNumberCountAlgorithm();
         perfectNumberAlgorithm = new PerfectNumberAlgorithm();
+        averageAlgorithm = new AverageAlgorithm();
+        averageCountAlgorithm = new AverageCountAlgorithm();
+        arraySumAverageAlgorithm = new ArraySumAverageAlgorithm();
+        maxAlgorithm = new MaxAlgorithm();
+        minAlgorithm = new MinAlgorithm();
+        averageExceptMaxAndMinAlgorithm = new AverageExceptMaxAndMinAlgorithm();
     }
 
     private void Start()
@@ -45,7 +59,13 @@ public class Study_04_17 : MonoBehaviour
         countAlgorithm?.Main(false);
         primeNumberAlgorithm?.Main(false);
         primeNumberCountAlgorithm?.Main(false);
-        perfectNumberAlgorithm?.Main(true);
+        perfectNumberAlgorithm?.Main(false);
+        averageAlgorithm?.Main(false);
+        averageCountAlgorithm?.Main(false);
+        arraySumAverageAlgorithm?.Main(false);
+        maxAlgorithm?.Main(false);
+        minAlgorithm?.Main(false);
+        averageExceptMaxAndMinAlgorithm?.Main(true);
     }
 }
 
@@ -340,6 +360,8 @@ public class PerfectNumberAlgorithm : Algorithm
     // 완전수 알고리즘
     public override void Main(bool play)
     {
+        if (play == false) return;
+
         // [1] input
         int sum = 0; // 약수의 합계
         int cnt = 0; // 완전수의 개수
@@ -401,6 +423,355 @@ public class PerfectNumberAlgorithm : Algorithm
     public override void OnShow(string str)
     {
         UnityEngine.Debug.Log(str);
+        StudySingleton.Instance.OnShow(str);
+    }
+}
+
+public class AverageAlgorithm : Algorithm
+{
+    // 평균 알고리즘
+
+    public override void Main(bool play)
+    {
+        if (play == false) return;
+
+        // [1] input
+        int[] data = { 90, 65, 78, 50, 95};
+
+        int cnt = 0;
+        int total = 0;
+        float average = 0;
+
+        // [2] process
+
+        // 내 풀이
+        for(int i = 0; i < data.Length; i++)
+        {
+            if (80 <= data[i] && data[i] <= 95)
+            {
+                cnt++;
+                total += data[i];
+            }
+        }
+
+        average = (float)total / cnt;
+
+        // 강사 풀이 1 (Linq 사용)
+        var averageTemp = data.Where(d => d >= 80 && 95 >= d).Average();
+
+        // 강사 풀이 2 (Linq 사용 X)
+        for (int i = 0; i < data.Length; i++)
+        {
+            if (data[i] >= 80 && data[i] <= 95)
+            {
+                total += data[i];
+                cnt++;
+            }
+        }
+
+        double avg = total / (double)cnt;
+
+        // [3] output
+        string strExpain = $"80점 이상 95점 이하인 점수의 평균은 {average}이며 학생 수는 {cnt}명 입니다.";
+        OnShow(strExpain);
+    }
+
+    public override void OnShow(string str)
+    {
+        UnityEngine.Debug.Log(str);
+        StudySingleton.Instance.OnShow(str);
+    }
+}
+
+public class AverageCountAlgorithm : Algorithm
+{
+    // 평균 이상 개수 구하기 알고리즘
+    public override void Main(bool play)
+    {
+        if (play == false) return;
+
+        // [1] input
+        int[] data = { 91, 80, 88, 25, 75 };
+        int sum = 0;
+        int cnt = 0;
+        double average = 0;
+
+        // [2] process
+
+        // 내 풀이
+        for(int i = 0; i < data.Length; i++)
+        {
+            sum += data[i];
+        }
+
+        average = sum / (double)data.Length;
+
+        for(int i = 0; i < data.Length; i++)
+        {
+            if(average <= data[i])
+            {
+                cnt++;
+            }
+        }
+
+        // 강사 풀이
+        var resultcount = 0;
+        for (int i = 0; i < data.Length; i++)
+        {
+            sum += data[i];
+            cnt++;
+        }
+
+        if (sum != 0 && cnt != 0)
+            average = sum / (double)data.Length;
+
+        for (int i = 0; i < data.Length; i++)
+        {
+            if (average <= data[i])
+            {
+                resultcount++;
+            }
+        }
+
+        // [3] output
+        string strExpain = $"전체 5명의 학생중 평균은 {average}이며 평균을 넘은 학생의 수는 {cnt}명 입니다.";
+        OnShow(strExpain);
+    }
+
+    public override void OnShow(string str)
+    {
+        Debug.Log(str);
+        StudySingleton.Instance.OnShow(str);
+    }
+}
+
+public class ArraySumAverageAlgorithm : Algorithm
+{
+    public override void Main(bool play)
+    {
+        if (play == false) return;
+
+        // [1] input
+        int[,] score = new int[,] 
+        {
+            {90,100,0,0},
+            {80,90,0,0},
+            {100,80,0,0}
+        };
+
+        // [2] process
+
+        // 내 풀이 (분명 첫 부분에서는 2중 for문 사용하라해서 썻는데 영상 다시 틀어보니 말이 바뀜요;)
+        int sum = 0;
+        for(int i = 0; i < score.GetLength(0); i++)
+        {
+            sum = 0;
+            for(int j = 0; j < score.GetLength(1); j++)
+            {
+                if(j < 2)
+                {
+                    sum += score[i,j];
+                }
+                else if (j == 2)
+                {
+                    score[i, j] = sum;
+                }
+                else
+                {
+                    score[i, j] = sum / 2;
+                }
+            }
+        }
+
+        // 강사 풀이
+        for(int i = 0; i < 3; i++)
+        {
+            score[i,2] = score[i,0] + score[i,1];
+            score[i, 3] = score[i, 2] / 2;
+        }
+
+        for(int i = 0; i < 3; i++)
+        {
+            for(int j = 0; j < 4; j++)
+            {
+                Debug.Log($"{score[i, j],4}\n");
+            }
+        }
+
+        // [3] output
+        string strExpain = $"";
+
+        for(int i = 0; i < score.GetLength(0); i++)
+        {
+            strExpain += $"{i + 1}번째 학생의 합계는 {score[i,2]} 이며 평균은 {score[i,3]} 입니다.\n";
+        }
+        OnShow(strExpain);
+    }
+
+    public override void OnShow(string str)
+    {
+        Debug.Log(str);
+        StudySingleton.Instance.OnShow(str);
+    }
+}
+
+public class MaxAlgorithm : Algorithm
+{
+    // 최대값 알고리즘
+    public override void Main(bool play)
+    {
+        if (play == false) return;
+
+        // [1] initialzie
+        int maxValueMine = int.MinValue;
+
+        // [2] input
+        int[] numbers = { -2, -5, -3, -7, -1 };
+
+        // [3] process
+        // 내 풀이
+        for(int i = 0; i < numbers.Length; i++)
+        {
+            if (maxValueMine < numbers[i])
+            {
+                maxValueMine = numbers[i];
+            }
+        }
+
+        // 강사 풀이 1 (Linq 사용)
+        int maxValue = numbers.Max();
+
+        // 강사 풀이 2 (Linq 미사용)
+        for (int i = 0; i < numbers.Length; i++)
+        {
+            if (numbers[i] > maxValueMine)
+            {
+                maxValueMine = numbers[i];
+            }
+        }
+
+        // [4] output
+        string strExpain = $"가장 큰 값은 {maxValueMine} 입니다.";
+        OnShow(strExpain);
+    }
+
+    public override void OnShow(string str)
+    {
+        Debug.Log(str);
+        StudySingleton.Instance.OnShow(str);
+    }
+}
+
+public class MinAlgorithm : Algorithm
+{
+    // 최소값 알고리즘
+    public override void Main(bool play)
+    {
+       if(play == false) return;
+
+        // [1] initialzie
+        int minValueMine = int.MaxValue;
+
+        // [2] input
+        int[] numbers = { -2, -5, -3, -7, -1 };
+
+        // [3] process
+        // 내 풀이
+        for (int i = 0; i < numbers.Length; i++)
+        {
+            if (minValueMine > numbers[i])
+            {
+                minValueMine = numbers[i];
+            }
+        }
+
+        // 강사 풀이 1 (Linq 사용)
+        int maxValue = numbers.Min();
+
+        // 강사 풀이 2 (Linq 미사용)
+        for (int i = 0; i < numbers.Length; i++)
+        {
+            if (numbers[i] < minValueMine)
+            {
+                minValueMine = numbers[i];
+            }
+        }
+
+        // [4] output
+        string strExpain = $"가장 작은 최소값은 {minValueMine} 입니다.";
+        OnShow(strExpain);
+    }
+
+    public override void OnShow(string str)
+    {
+        Debug.Log(str);
+        StudySingleton.Instance.OnShow(str);
+    }
+}
+
+public class AverageExceptMaxAndMinAlgorithm : Algorithm
+{
+    // 최대값과 최소값을 제외한 평균값 구하기
+    public override void Main(bool play)
+    {
+        if(!play) return;
+
+        // [1] initialzie
+        int maxvalue = int.MinValue;
+        int minvalue = int.MaxValue;
+
+        // [2] input
+        int[] scores = { 10, 20, 30, 40, 50 };
+        var sum = 0;
+        double average;
+        var cnt = 0;
+
+        // [3] process
+        // 내 풀이
+        maxvalue = scores.Max();
+        minvalue = scores.Min();
+
+        for(int i = 0; i < scores.Length; i++)
+        {
+            if (scores[i] == maxvalue || scores[i] == minvalue)
+            {
+                continue;
+            }
+            else
+            {
+                sum += scores[i];
+                cnt++;
+            }
+        }
+
+        average = sum / (double)cnt;
+
+        // 강사 풀이
+        var max = Int32.MinValue;
+        var min = Int32.MaxValue;
+        for (int i = 0; i < scores.Length; i++)
+        {
+            sum += scores[i];
+            if (scores[i] > max)
+            {
+                max = scores[i];
+            }
+            if (scores[i] < min)
+            {
+                min = scores[i];
+            }
+        }
+
+        average = (sum - max - min) / (double)(scores.Length - 2);
+
+        // [4] output
+        string strExapin = $"최대값은 {maxvalue} 이며 최소값은 {minvalue} 입니다. 이를 제외한 평균의 점수는 {average} 입니다.";
+        OnShow(strExapin);
+    }
+
+    public override void OnShow(string str)
+    {
+        Debug.Log(str);
         StudySingleton.Instance.OnShow(str);
     }
 }
