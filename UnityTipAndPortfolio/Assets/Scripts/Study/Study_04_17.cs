@@ -35,6 +35,9 @@ public class Study_04_17 : MonoBehaviour
     private MaxAlgorithm maxAlgorithm;
     private MinAlgorithm minAlgorithm;
     private AverageExceptMaxAndMinAlgorithm averageExceptMaxAndMinAlgorithm;
+    private NearAlgorithm nearAlgorithm;
+    private NearAllAlgorithm nearAllAlgorithm;
+    private RankAlgorithm rankAlgorithm;
 
     private void Awake()
     {
@@ -50,6 +53,9 @@ public class Study_04_17 : MonoBehaviour
         maxAlgorithm = new MaxAlgorithm();
         minAlgorithm = new MinAlgorithm();
         averageExceptMaxAndMinAlgorithm = new AverageExceptMaxAndMinAlgorithm();
+        nearAlgorithm = new NearAlgorithm();    
+        nearAllAlgorithm = new NearAllAlgorithm();
+        rankAlgorithm = new RankAlgorithm();
     }
 
     private void Start()
@@ -65,7 +71,10 @@ public class Study_04_17 : MonoBehaviour
         arraySumAverageAlgorithm?.Main(false);
         maxAlgorithm?.Main(false);
         minAlgorithm?.Main(false);
-        averageExceptMaxAndMinAlgorithm?.Main(true);
+        averageExceptMaxAndMinAlgorithm?.Main(false);
+        nearAlgorithm?.Main(false);
+        nearAllAlgorithm?.Main(false);
+        rankAlgorithm?.Main(true);
     }
 }
 
@@ -772,6 +781,167 @@ public class AverageExceptMaxAndMinAlgorithm : Algorithm
     public override void OnShow(string str)
     {
         Debug.Log(str);
+        StudySingleton.Instance.OnShow(str);
+    }
+}
+
+public class NearAlgorithm : Algorithm
+{
+    // 근삿값 알고리즘
+    // 차잇값의 절대값의 최솟값
+
+    public override void Main(bool play)
+    {
+        if (play == false) return;
+
+        // 절대값 구하기 로컬함수 (Math.Abs 함수와 동일한 기능임)
+        int Abs(int num) => (num < 0) ? -num : num;
+
+        // [0] initialize
+        int min = int.MaxValue;
+
+        // [1] input
+        int[] numbers = { 10, 20, 30, 27,17 };
+        int target = 25;
+        int array = 0;
+        int absValue = 0;
+        int arrayvalue = 0;
+
+        // [2] process
+
+        // 내 풀이
+        for(int i = 0; i < numbers.Length; i++)
+        {
+            absValue = Math.Abs(target - numbers[i]);
+
+            if(min > absValue)
+            {
+                min = absValue;
+                array = i;
+            }
+        }
+
+        // 강사 풀이 1 (Linq 1)
+        var minimum = numbers.Min(x => Math.Abs(x - target));               // 차잇값의 최솟값
+        var closest = numbers.First(x => Math.Abs(target - x) == minimum);  // 근삿값
+
+        // 강사 풀이 2 (Linq 2)
+        var temp = numbers.First(x => Math.Abs(target - x) == numbers.Min(x => Math.Abs(x - target)));
+
+        // 강사 풀이 3 (Linq X)
+        for(int i = 0; i< numbers.Length; i++)
+        {
+            int abs = Abs(numbers[i] - target);
+            if(abs < min)
+            {
+                min = abs;
+                arrayvalue = numbers[i];
+            }
+        }
+
+        // [3] output
+        string strExpain = $"{target}과 가장 가까운 값은 : {numbers[array]} 이며 차이를 절대값으로 변환한 경우는 {min} 입니다.";
+        OnShow(strExpain);
+    }
+
+    public override void OnShow(string str)
+    {
+        Debug.Log(str);
+        StudySingleton.Instance.OnShow(str);
+    }
+}
+
+public class NearAllAlgorithm : Algorithm
+{
+    // 가까운 값 모두 구하기 알고리즘 (동일한 최솟값을 가진 숫자들 모두 구하기인듯;)
+
+    public override void Main(bool play)
+    {
+        if (play == false) return;
+
+        // [1] input
+        int[] data = { 10, 20, 23, 27, 17 };
+        int target = 25;
+        List<int> nears = new List<int>();
+        int min = int.MaxValue;
+
+        // [2] process
+        for (int i = 0; i < data.Length; i++)
+        {
+            if (Math.Abs(data[i] - target) < min)
+            {
+                min = Math.Abs(data[i] - target);
+            }
+        }
+
+        // 동일한 값이 들어온 경우에 다시 돌면서 넣어줌
+        for (int i = 0; i < data.Length; i++)
+        {
+            if (Math.Abs(data[i] - target) == min)
+            {
+                nears.Add(i);
+            }
+        }
+
+        // [3] output
+        string strExpain = $"차이의 최솟값은 {min} 같은 최솟값을 가진 숫자의 개수는 {nears.Count} 입니다.";
+        OnShow(strExpain);
+    }
+
+    public override void OnShow(string str)
+    {
+        Debug.Log($"{str}");
+        StudySingleton.Instance.OnShow(str);
+    }
+}
+
+public class RankAlgorithm : Algorithm
+{
+    // 순위 알고리즘
+
+    public override void Main(bool play)
+    {
+        if(play == false) return;
+
+        // [1] input
+        int[] scores = { 90, 87, 100, 95, 80 };
+        int[] rankings = Enumerable.Repeat(1,5).ToArray();
+
+        // [2] process
+
+        // 내 풀이
+        for(int i = 0; i < scores.Length; i++)
+        {
+            rankings[i] = 1;
+            for (int j = 0; j < scores.Length; j++)
+            {
+                if (scores[i] < scores[j])
+                {
+                    rankings[i]++;
+                }
+            }
+        }
+
+        // 강사 풀이 1 (Linq 사용)
+        var ranking = scores.Select(x => scores.Where(y => y > x).Count() + 1).ToArray();
+
+        // 강사 풀이 2 (Linq 미사용)
+        // 내 풀이랑 거의 같아서 넘어갔음
+
+        // [3] output
+        string strExpain = $"";
+
+        for(int i = 0; i < rankings.Length; i++)
+        {
+            strExpain += $"{scores[i],3}점 : {rankings[i],3} 등";
+        }
+
+        OnShow(strExpain);
+    }
+
+    public override void OnShow(string str)
+    {
+        Debug.Log($"RankAlgorithm: {str}");
         StudySingleton.Instance.OnShow(str);
     }
 }
