@@ -38,6 +38,8 @@ public class Study_04_17 : MonoBehaviour
     private NearAlgorithm nearAlgorithm;
     private NearAllAlgorithm nearAllAlgorithm;
     private RankAlgorithm rankAlgorithm;
+    private SortAlgorithm sortAlgorithm;
+    private SearchAlgorithm searchAlgorithm;
 
     private void Awake()
     {
@@ -56,6 +58,8 @@ public class Study_04_17 : MonoBehaviour
         nearAlgorithm = new NearAlgorithm();    
         nearAllAlgorithm = new NearAllAlgorithm();
         rankAlgorithm = new RankAlgorithm();
+        sortAlgorithm   = new SortAlgorithm();
+        searchAlgorithm = new SearchAlgorithm();      
     }
 
     private void Start()
@@ -74,7 +78,9 @@ public class Study_04_17 : MonoBehaviour
         averageExceptMaxAndMinAlgorithm?.Main(false);
         nearAlgorithm?.Main(false);
         nearAllAlgorithm?.Main(false);
-        rankAlgorithm?.Main(true);
+        rankAlgorithm?.Main(false);
+        sortAlgorithm?.Main(false);
+        searchAlgorithm?.Main(true);
     }
 }
 
@@ -942,6 +948,148 @@ public class RankAlgorithm : Algorithm
     public override void OnShow(string str)
     {
         Debug.Log($"RankAlgorithm: {str}");
+        StudySingleton.Instance.OnShow(str);
+    }
+}
+
+public class SortAlgorithm : Algorithm
+{
+    // 정렬 알고리즘
+    public override void Main(bool play)
+    {
+        if (play == false) return;
+
+        // [1] input
+        int[] data = { 3, 2, 1, 4, 5 };
+
+        // [2] process
+
+        // 내 풀이 (내림차 순)
+        List<int> sort = data.ToList();
+        sort.Sort(new Comparison<int>((n1, n2) => n2.CompareTo(n1)));
+
+        // 내 풀이 (오름차 순)
+        sort.Sort();
+
+        // 강사 풀이 1 (오름차 순)
+        var sortTeacher = data.OrderBy(x => x).ToArray();
+
+        // 강사 풀이 2 (내림차 순)
+        sortTeacher = data.OrderByDescending(x => x).ToArray();
+
+        // 강사 풀이 3
+        int N = data.Length;
+        for (int i = 0; i < N; i++)
+        {
+            for(int j = i+1; j < N; j++)
+            {
+                // > : 오름차순
+                // < : 내림차순
+                if (data[i] > data[j])
+                {
+                    int temp = data[i];
+                    data[i] = data[j];
+                    data[j] = temp; 
+                }
+            }
+        }
+
+        // [3] output
+        string strExpain = $"";
+
+        for(int i = 0; i < data.Length; i++)
+        {
+            strExpain += data[i].ToString();
+        }
+
+        OnShow(strExpain);
+    }
+
+    public override void OnShow(string str)
+    {
+        Debug.Log(str);
+        StudySingleton.Instance.OnShow(str);
+    }
+}
+
+public class SearchAlgorithm : Algorithm
+{
+    // 검색 알고리즘
+    public override void Main(bool play)
+    {
+        if (play == false) return;
+
+        // [1] input
+        int[] data = { 1, 3, 5, 7, 9 }; // 오름차순으로 정렬되었다고 가정
+        int search = 3; // 검색한 값
+        bool find = false;
+        int index = -1; // 찾은 위치
+
+        // [2] process 이진 검색(BinarySearch) : FullScan -> Index Scan
+
+        // 내 풀이 (이진 검색을 사용하지 않음 ㅠ)
+        for(int i = 0; i< data.Length; i++)
+        {
+            if (data[i] == search)
+            {
+                index = i;
+                break;
+            }
+            else
+            {
+                index = -1;
+            }
+        }
+
+        // 강사 풀이 1 (Linq)
+        var result = data.ToList().BinarySearch(9); // 찾을 데이터가 없으면 -로 반환
+       
+        // 이런식으로도 사용 가능
+        if(Array.BinarySearch(data,3) >= 0)
+        {
+
+        }
+        else
+        {
+            // -1인 경우는 찾지 못한 경우이니 return
+            return;
+        }
+
+        // 강사 풀이 2 (Linq 사용 X)
+        int low = 0;
+        int high = data.Length - 1;
+
+        int mid = 0;
+        while(low <= high)
+        {
+            mid = (low + high) / 2; // 중간 인덱스 구하기
+
+            // 중간값이 내가 찾는값이야?
+            if (data[mid] == search)
+            {
+                find = true;
+                index = mid;
+                break;
+            }
+
+            if (data[mid] > search)
+            {
+                high = mid -1; // 찾을 데이터가 작으면 high 위치 변경
+            }
+            else
+            {
+                low = mid + 1; // 찾을 데이터가 크면 low 위치 변경
+            }
+        }
+
+        // [3] output
+        string strExpain = find == true ? $"{search}를 {index}위치에서 찾았습니다." : $"찾지 못하였습니다.";
+        OnShow(strExpain);
+    }
+
+    public override void OnShow(string str)
+    {
+        Debug.Log(str);
         StudySingleton.Instance.OnShow(str);
     }
 }
