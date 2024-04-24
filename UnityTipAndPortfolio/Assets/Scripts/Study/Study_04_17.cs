@@ -40,6 +40,9 @@ public class Study_04_17 : MonoBehaviour
     private RankAlgorithm rankAlgorithm;
     private SortAlgorithm sortAlgorithm;
     private SearchAlgorithm searchAlgorithm;
+    private MergeAlgorithm mergeAlgorithm;
+    private ModeAlgorithm   modeAlgorithm;
+    private GroupAlgorithm groupAlgorithm;
 
     private void Awake()
     {
@@ -59,7 +62,10 @@ public class Study_04_17 : MonoBehaviour
         nearAllAlgorithm = new NearAllAlgorithm();
         rankAlgorithm = new RankAlgorithm();
         sortAlgorithm   = new SortAlgorithm();
-        searchAlgorithm = new SearchAlgorithm();      
+        searchAlgorithm = new SearchAlgorithm();     
+        mergeAlgorithm = new MergeAlgorithm();
+        modeAlgorithm = new ModeAlgorithm();
+        groupAlgorithm = new GroupAlgorithm();  
     }
 
     private void Start()
@@ -80,7 +86,10 @@ public class Study_04_17 : MonoBehaviour
         nearAllAlgorithm?.Main(false);
         rankAlgorithm?.Main(false);
         sortAlgorithm?.Main(false);
-        searchAlgorithm?.Main(true);
+        searchAlgorithm?.Main(false);
+        mergeAlgorithm?.Main(false);
+        modeAlgorithm?.Main(false);
+        groupAlgorithm?.Main(true);
     }
 }
 
@@ -1091,5 +1100,261 @@ public class SearchAlgorithm : Algorithm
     {
         Debug.Log(str);
         StudySingleton.Instance.OnShow(str);
+    }
+}
+
+public class MergeAlgorithm : Algorithm
+{
+    // 병합 알고리즘 : 오름차순으로 정렬되어 있는 정수 배열을 하나의 배열로 병합
+    public override void Main(bool play)
+    {
+        if (play == false) return;
+
+        // [0] input
+        int[] first = { 1, 3, 5 };
+        int[] second = { 2, 4 };
+        int M = first.Length;
+        int N = second.Length;
+        int[] merge = new int[M + N];
+        int i = 0; 
+        int j = 0;
+        int k = 0;
+
+        // [1] process
+
+        // 내 풀이
+        for(i = 0; i < M; i++)
+        {
+            k = i;
+            merge[k] = first[i];
+        }
+
+        for(j = 0; j < N; j++)
+        {
+            k = i + j;
+            merge[k] = second[j];
+        }
+
+        merge = merge.OrderBy(m => m).ToArray();
+
+        // 강사 풀이 1 (Linq 사용 1)
+        int[] temp = (from o in first select o).Union(from t in second select t).OrderBy(m => m).ToArray();
+
+        // 강사 풀이 2 (Linq 사용 2)
+        int[] temp2 = first.Union(second).OrderBy(m => m).ToArray();
+
+        i = 0;
+        j = 0;
+        k = 0;
+        // 강사 풀이 3 (Linq 사용 X)
+        while(i < M && j < N)
+        {
+            if (first[i] <= second[j]) // 더 작은값을 merge 배열에 저장
+            {
+                merge[k] = first[i];
+                k++;
+                i++;
+            }
+            else
+            {
+                merge[k] = second[j];
+                k++;
+                j++;
+            }
+        }
+
+        // [2] output
+        string strExpain = $"";
+
+        for(int q = 0; q< merge.Length; q++)
+        {
+            strExpain += merge[q];
+        }
+
+        OnShow(strExpain);
+    }
+
+    public override void OnShow(string str)
+    {
+        Debug.Log(str);
+        StudySingleton.Instance.OnShow(str);
+    }
+}
+
+public class ModeAlgorithm : Algorithm
+{
+    // 최빈값 알고리즘 : 주어진 데이터에서 가장 많이 중복된 값
+    public override void Main(bool play)
+    {
+        if (play == false) return;
+
+        // [1] input
+        int[] scores = { 1, 3, 4, 3, 5 };
+        int[] indexs = new int[scores.Length + 1];
+        int mode = 0;
+        int max = int.MinValue;
+
+        // [2] process
+
+        // 내 풀이
+        for(int i = 0; i < scores.Length; i++)
+        {
+            indexs[scores[i]]++;
+        }
+
+        for(int i = 0; i < indexs.Length; i++)
+        {
+            if(max < indexs[i])
+            {
+                max = indexs[i];
+                mode = i;
+            }           
+        }
+
+        // 강사 풀이 1 (Linq 사용)
+        var q = scores.GroupBy(v => v).OrderByDescending(g => g.Count()).First();
+        int modeCount = q.Count();
+        int frequency = q.Key;
+
+        // 강사 풀이 2 (Linq 사용 X)
+        for(int i = 0; i < scores.Length; i++)
+        {
+            indexs[scores[i]]++;
+        }
+
+        for (int i = 0; i < indexs.Length; i++)
+        {
+            if (max < indexs[i])
+            {
+                max = indexs[i];
+                mode = i;
+            }
+        }
+
+        // [3] output
+        string strExpain = $"최빈값은 {mode} 이며 {max} 번 나타남";
+        OnShow(strExpain);
+    }
+
+    public override void OnShow(string str)
+    {
+        Debug.Log(str);
+        StudySingleton.Instance.OnShow(str);
+    }
+}
+
+public class GroupAlgorithm : Algorithm
+{
+    class Record
+    {
+        public string Name { get; set;}
+        public int Quantity { get; set;} 
+    }
+
+    // 그룹 알고리즘
+    public override void Main(bool play)
+    {
+        if (play == false) return;
+
+        List<Record> GetAll()
+        {
+            return new List<Record> 
+            { 
+                new Record {Name = "RADIO", Quantity = 3 },
+                new Record {Name = "TV", Quantity = 1 },
+                new Record {Name = "RADIO", Quantity = 2 },
+                new Record {Name = "DVD", Quantity = 4 }
+            };
+        }
+
+        string PrintData(string messgae, List<Record> data)
+        {
+            string strTemp = messgae;
+
+            foreach(var item in data)
+            {
+                strTemp += $"\n{item.Name,5} - {item.Quantity,5}";
+            }
+            return strTemp;
+        }
+
+        // [1] input
+        List<Record> records = GetAll();
+        List<Record> groups = new List<Record>();
+        int N = records.Count;
+
+        // [2] process
+
+        // 내 풀이
+
+        records = records.OrderBy(x => x.Name).ToList();
+
+        bool Empty = false;
+        for(int i =0; i < N; i++)
+        {
+            Empty = false;
+            if (groups.Count <= 0)
+            {
+                groups.Add(records[i]);
+                continue;
+            }
+
+            for (int j = 0; j < groups.Count; j++)
+            {
+                if (groups[j].Name == records[i].Name)
+                {
+                    groups[j].Quantity += records[i].Quantity;
+                    Empty = false;
+                    break;
+                }
+                else
+                {
+                    Empty = true;
+                }
+            }
+            if(Empty == true)
+            {
+                groups.Add(records[i]);
+            }
+        }
+
+        // 강사 풀이
+
+        // [A] 정렬
+        for (int i = 0; i < N - 1; i++)
+        {
+            for(int j = i + 1; j < N; j++)
+            {
+                if (string.Compare(records[i].Name, records[j].Name) > 0)
+                {
+                    var t = records[i];
+                    records[i] = records[j];
+                    records[j] = t;
+                }
+            }
+        }
+
+        // [B] 합치기
+        int subTotal = 0;
+        for(int i = 0; i < N; i++)
+        {
+            subTotal += records[i].Quantity;
+
+            // 다음 레코드가 없거나, 현재 레코드와 다음 레코드가 다르다면
+            if((i+1) == N || (records[i].Name != records[i+1].Name))
+            {
+                groups.Add(new Record { Name = records[i].Name, Quantity = subTotal });
+                subTotal = 0;
+            }
+        }
+
+        // [3] output
+        OnShow(PrintData("원본 데이터", groups));
+    }
+
+    public override void OnShow(string str)
+    {
+        Debug.Log(str);
+        StudySingleton.Instance.OnShow(str); 
     }
 }
