@@ -4,6 +4,11 @@ using UnityEngine;
 using System;
 using System.Linq;
 using System.Text;
+using Unity.VisualScripting;
+using UnityEngine.TestTools;
+using static UnityEngine.GraphicsBuffer;
+using static UnityEngine.InputSystem.LowLevel.InputStateHistory;
+using static UnityEngine.ParticleSystem;
 
 namespace JJW_Utils
 {
@@ -697,7 +702,7 @@ namespace JJW_Utils
             // SetTextColor 사용 부분 GetColorByHexadecimal()이걸로 교체 및 Get_TextColorType(textColor) 매개 변수 요거 호출
 
             Color _color;
-            ColorUtility.TryParseHtmlString(hexadecimalColor, out _color);
+            UnityEngine.ColorUtility.TryParseHtmlString(hexadecimalColor, out _color);
             return _color;
         }
 
@@ -839,10 +844,431 @@ namespace JJW_Utils
     }
 
     /// <summary>
-    /// 알고리즘이 필요한 경우에 사용하도록 함수로 정리한 클래스입니다.
+    /// 알고리즘 함수를 정의한 클래스 입니다.
     /// </summary>
     public class Algorithm_Utils
     {
+        #region 합계
+        /// <summary>
+        /// 조건이 없는 경우에 모든 합계를 반환해주는 함수
+        /// </summary>
+        /// <param name="param">
+        /// 배열로 넘겨주도록 List의 경우 ToArray를 통해 넘겨주면 됨
+        /// </param>
+        /// <returns></returns>
+        public int Sum(int[] param)
+        {
+            return param.Sum();
+        }
 
+        /// <summary>
+        /// 조건이 있는 경우에 합계를 반환해주는 함수
+        /// </summary>
+        /// <param name="param">
+        /// 배열로 넘겨주도록 List의 경우 ToArray를 통해 넘겨주면 됨
+        /// </param>
+        /// <param name="condition">
+        /// 조건의 값
+        /// </param>
+        /// <returns></returns>
+        public int Sum(int[] param, int condition)
+        {
+            return param.Where(x => x >= condition).Sum();
+        }
+        #endregion
+
+        #region 등차수열
+        /// <summary>
+        /// 조건에 들어온 값 중 등차수열의 합을 반환해주는 함수
+        /// </summary>
+        /// <param name="param">
+        /// 조건에 해당하는 값
+        /// </param>
+        /// <returns></returns>
+        public int ArithmmeticSequenceTotal(int param)
+        {
+            var Sum = 0;
+            for (int i = 1; i <= param; i++)
+            {
+                if (i % 2 == 1)
+                    Sum += i;
+            }
+            return Sum;
+        }
+
+        /// <summary>
+        /// 조건에 들어온 값 중 등차수열을 리스트로 반환해주는 함수
+        /// </summary>
+        /// <param name="param">
+        /// 조건에 해당하는 값
+        /// </param>
+        /// <returns></returns>
+        public List<int> ArithmmeticSequenceList(int param)
+        {
+            List<int> ints = new List<int>();
+            for (int i = 1; i <= param; i++)
+            {
+                if (i % 2 == 1)
+                    ints.Add(i);
+            }
+            return ints;
+        }
+        #endregion
+
+        #region 개수
+        /// <summary>
+        /// 조건에 맞는 개수를 반환해주는 함수입니다.
+        /// </summary>
+        /// <param name="condition">
+        /// 조건에 해당하는 값
+        /// </param>
+        /// <param name="arrayCount">
+        /// 몇개의 배열 or 리스트 인지
+        /// </param>
+        /// <returns></returns>
+        public int Count(int condition, int arrayCount)
+        {
+            return Enumerable.Range(1, arrayCount).ToArray().Where(n => n % condition == 0).Count();
+        }
+        #endregion
+
+        #region 소수
+        /// <summary>
+        /// 조건에 해당하는 값이 소수인지 판단하는 함수
+        /// </summary>
+        /// <param name="condition">
+        /// 조건에 해당하는 값
+        /// </param>
+        /// <returns></returns>
+        public bool PrimeNumberTotal(int condition)
+        {
+            return Prime(condition);
+        }
+
+        /// <summary>
+        /// 조건의 값 중 소수가 몇개인지를 반환해주는 함수
+        /// </summary>
+        /// <param name="condition">
+        /// 조건에 해당하는 값
+        /// </param>
+        /// <returns></returns>
+        public List<int> PrimeNumberCount(int condition)
+        {
+            List<int> ints = new List<int>();
+
+            for(int i = 1; i < condition; i++)
+            {
+                if(Prime(i) == true)
+                {
+                    ints.Add(i);
+                }
+            }
+            return ints;
+        }
+
+        /// <summary>
+        /// 소수 계산을 위하여 빼놓은 함수 약수를 기준으로 계산함
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        private bool Prime(int input)
+        {
+            if (input == 1)
+                return false;
+
+            for (int q = 2; q * q <= input; q++)
+            {
+                if (input % q == 0)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+        #endregion
+
+        #region 완전수
+        /// <summary>
+        /// 조건에 값 중 완전수를 찾아 반환해주는 함수
+        /// </summary>
+        /// <param name="condition"></param>
+        /// <returns></returns>
+        public List<int> PerfectNumberCount(int condition)
+        {
+            int sum = 0;
+            List<int> ints = new List<int>();
+            for (int i = 1; i <= condition; i++)
+            {
+                sum = 0;
+                // 절반 초과의 값은 약수가 될 수 없음 ㅇㅇ;
+                for (int j = 1; j <= i / 2; j++)
+                {
+                    if (i % j == 0)
+                    {
+                        sum += j;
+                    }
+                }
+
+                // 완전수가 되려면 약수인 j의 값을 전부 더한 경우에 값이 같아야 함 ㅇㅇ;
+                if (i == sum)
+                {
+                    ints.Add(i);
+                }
+            }
+            return ints;
+        }
+
+        #endregion
+
+        #region 평균
+        /// <summary>
+        /// 조건으로 받은 값에 평균을 구해 반환해주는 함수
+        /// </summary>
+        /// <param name="param">
+        /// 조건에 해당하는 배열
+        /// </param>
+        /// <param name="condition1">
+        /// 특정 조건 (d >= condition1)
+        /// </param>
+        /// <param name="condition2">
+        /// 특정 조건 (d <= condition2)
+        /// </param>
+        /// <returns></returns>
+        public double Average(int[] param, int condition1 = 0, int condition2 = 0)
+        {
+            if(condition1 == 0 && condition2 == 0)
+            {
+                return param.Average();
+            }
+            else
+            {
+                return param.Where(d => d >= condition1 && condition2 >= d).Average();
+            }
+        }
+
+        /// <summary>
+        /// 평균보다 높은 숫자를 반환해주는 함수
+        /// </summary>
+        /// <param name="param">
+        /// 조건에 맞는 배열
+        /// </param>
+        /// <returns></returns>
+        public List<int> AverageCount(int[] param)
+        {
+            List<int> ints = new List<int>();
+
+            int sum = 0;
+            double average = 0;
+            for (int i = 0; i < param.Length; i++)
+            {
+                sum += param[i];
+            }
+
+            average = sum / (double)param.Length;
+
+            for (int i = 0; i < param.Length; i++)
+            {
+                if (average <= param[i])
+                {
+                    ints.Add(param[i]);
+                }
+            }
+
+            return ints;
+        }
+        #endregion
+
+        #region 최댓값
+        /// <summary>
+        /// 최댓값을 반환해주는 함수
+        /// </summary>
+        /// <param name="param">
+        /// 조건에 해당하는 배열
+        /// </param>
+        /// <returns></returns>
+        public int Max(int[] param)
+        {
+            return param.Max();
+        }
+        #endregion
+
+        #region 최솟값
+        /// <summary>
+        /// 최솟값을 반환해주는 함수
+        /// </summary>
+        /// <param name="param">
+        /// 조건에 해당하는 배열
+        /// </param>
+        /// <returns></returns>
+        public int Min(int[] param) 
+        {
+            return param.Min();
+        }
+        #endregion
+
+        #region 근삿값
+        /// <summary>
+        /// 근삿값을 반환해주는 함수
+        /// </summary>
+        /// <param name="param">
+        /// 조건에 해당하는 배열
+        /// </param>
+        /// <param name="condition">
+        /// 근삿값의 기준
+        /// </param>
+        /// <returns></returns>
+        public int Near(int[] param, int condition)
+        {
+            return param.First(x => Math.Abs(condition - x) == param.Min(x => Math.Abs(x - condition)));
+        }
+
+        /// <summary>
+        /// 근삿값 모두 구하는 함수
+        /// </summary>
+        /// <param name="param">
+        /// 조건에 해당하는 배열
+        /// </param>
+        /// <param name="condition">
+        /// 근삿값의 기준
+        /// </param>
+        /// <returns></returns>
+        public List<int> NearAll(int[] param, int condition)
+        {
+            List<int> ints = new List<int>();
+            int min = int.MaxValue;
+
+            for (int i = 0; i < param.Length; i++)
+            {
+                if (Math.Abs(param[i] - condition) < min)
+                {
+                    min = Math.Abs(param[i] - condition);
+                }
+            }
+
+            // 동일한 값이 들어온 경우에 다시 돌면서 넣어줌
+            for (int i = 0; i < param.Length; i++)
+            {
+                if (Math.Abs(param[i] - condition) == min)
+                {
+                    ints.Add(i);
+                }
+            }
+            return ints;
+        }
+        #endregion
+
+        #region 순위
+        /// <summary>
+        /// 조건에 해당하는 값들에 순위를 반환해주는 함수
+        /// </summary>
+        /// <param name="param">
+        /// 조건에 해당하는 배열
+        /// </param>
+        /// <returns></returns>
+        public int[] Ranking(int[] param)
+        {
+            return param.Select(x => param.Where(y => y > x).Count() + 1).ToArray();
+        }
+        #endregion
+
+        #region 정렬
+        /// <summary>
+        /// 조건에 해당하는 값을 정렬한 뒤 반환해주는 함수
+        /// </summary>
+        /// <param name="param">
+        /// 조건에 해당하는 값
+        /// </param>
+        /// <param name="Descending">
+        /// false = 오름차 true = 내림차
+        /// </param>
+        /// <returns></returns>
+        public int[] Sort(int[] param, bool Descending = false)
+        {
+            if(Descending == true)
+                return param.OrderByDescending(x => x).ToArray();
+            else
+                return param.OrderBy(x => x).ToArray();
+        }
+        #endregion
+
+        #region 검색
+        /// <summary>
+        /// 조건에 해당하는 배열 중 특정 값의 인덱스를 반환해주는 함수
+        /// </summary>
+        /// <param name="param">
+        /// 조건에 해당하는 배열
+        /// </param>
+        /// <param name="condition">
+        /// 찾을 값
+        /// </param>
+        /// <returns></returns>
+        public int Search(int[] param, int condition)
+        {
+            // -1인 경우에는 찾지 못한 경우임
+            return param.ToList().BinarySearch(condition);
+        }
+        #endregion
+
+        #region 병합
+        /// <summary>
+        /// 조건에 해당하는 배열 2개를 병합한 뒤 오름차순으로 정렬한 뒤 반환해주는 함수
+        /// </summary>
+        /// <param name="param1">
+        /// 조건에 해당하는 배열 1
+        /// </param>
+        /// <param name="param2">
+        /// 조건에 해당하는 배열 2
+        /// </param>
+        /// <returns></returns>
+        public int[] Merge(int[] param1, int[] param2)
+        {
+            return param1.Union(param2).OrderBy(m => m).ToArray();
+        }
+        #endregion
+
+        #region 최빈값
+        /// <summary>
+        /// 조건에 해당하는 배열 중 가장 많이 중복되는 값을 반환해주는 함수
+        /// </summary>
+        /// <param name="param">
+        /// 조건에 해당하는 배열
+        /// </param>
+        /// <returns></returns>
+        public int Mode(int[] param)
+        {
+            var q = param.GroupBy(v => v).OrderByDescending(g => g.Count()).First();
+            return q.Key;
+        }
+        #endregion
+
+        #region 그룹
+        // 그룹 알고리즘은 특이사항이므로 따로 함수로 만들지 않고 주석으로 남겨 놓았음
+        //for (int i = 0; i < N - 1; i++)
+        //{
+        //    for(int j = i + 1; j < N; j++)
+        //    {
+        //        if (string.Compare(records[i].Name, records[j].Name) > 0)
+        //        {
+        //            var t = records[i];
+        //            records[i] = records[j];
+        //            records[j] = t;
+        //        }
+        //    }
+        //}
+
+        //// [B] 합치기
+        //int subTotal = 0;
+        //for(int i = 0; i < N; i++)
+        //{
+        //    subTotal += records[i].Quantity;
+
+        //    // 다음 레코드가 없거나, 현재 레코드와 다음 레코드가 다르다면
+        //    if((i+1) == N || (records[i].Name != records[i+1].Name))
+        //    {
+        //        groups.Add(new Record { Name = records[i].Name, Quantity = subTotal });
+        //        subTotal = 0;
+        //    }
+        //}
+        #endregion
     }
 }
