@@ -64,12 +64,18 @@
     <Compile Include="Assets\Scripts\Study\Study_04_17.cs" />
     <Compile Include="Assets\Scripts\Public\Utils.cs" />
     <Compile Include="Assets\Scripts\Character\Character.cs" />
+    <Compile Include="Assets\Scripts\PathFind\AStar\PathfindingPQ.cs" />
     <Compile Include="Assets\Scripts\Camera\CameraController.cs" />
+    <Compile Include="Assets\Scripts\PathFind\AStar\Pathfinding.cs" />
     <Compile Include="Assets\Scripts\Public\Singleton.cs" />
+    <Compile Include="Assets\Scripts\PathFind\AStar\Grid.cs" />
     <Compile Include="Assets\Scripts\Character\NPC.cs" />
+    <Compile Include="Assets\Scripts\PathFind\AStar\PriorityQueueTest.cs" />
     <Compile Include="Assets\Scripts\NavMesh\InputAgent.cs" />
     <Compile Include="Assets\Scripts\Character\PC.cs" />
     <Compile Include="Assets\Scripts\NavMesh\SimpleDynamicAgent.cs" />
+    <Compile Include="Assets\Scripts\PathFind\AStar\Node.cs" />
+    <Compile Include="Assets\Scripts\PathFind\AStar\PriorityQueue.cs" />
     <Compile Include="Assets\Scripts\Study\StudySingleton.cs" />
     <Compile Include="Assets\Scripts\UI\UIManager.cs" />
     <Compile Include="Assets\Scripts\NavMesh\PointerAgent.cs" />
@@ -938,12 +944,24 @@
       <HintPath>Library\ScriptAssemblies\Unity.PlasticSCM.Editor.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="UniTask.TextMeshPro">
+      <HintPath>Library\ScriptAssemblies\UniTask.TextMeshPro.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="Unity.Timeline.Editor">
       <HintPath>Library\ScriptAssemblies\Unity.Timeline.Editor.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Unity.VisualScripting.Shared.Editor">
       <HintPath>Library\ScriptAssemblies\Unity.VisualScripting.Shared.Editor.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UniTask.DOTween">
+      <HintPath>Library\ScriptAssemblies\UniTask.DOTween.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UniTask.Addressables">
+      <HintPath>Library\ScriptAssemblies\UniTask.Addressables.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Unity.VisualStudio.Editor">
@@ -968,6 +986,10 @@
     </Reference>
     <Reference Include="Unity.Rider.Editor">
       <HintPath>Library\ScriptAssemblies\Unity.Rider.Editor.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UniTask.Linq">
+      <HintPath>Library\ScriptAssemblies\UniTask.Linq.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Unity.VisualScripting.Flow">
@@ -1028,6 +1050,10 @@
     </Reference>
     <Reference Include="Unity.AI.Navigation.Editor">
       <HintPath>Library\ScriptAssemblies\Unity.AI.Navigation.Editor.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UniTask">
+      <HintPath>Library\ScriptAssemblies\UniTask.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Unity.VisualScripting.State">
