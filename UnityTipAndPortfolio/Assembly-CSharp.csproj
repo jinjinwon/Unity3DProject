@@ -1070,6 +1070,18 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="Quadtree.csproj">
+      <Project>{61B0AB1E-0EBB-A195-536F-9F91BF1A8A70}</Project>
+      <Name>Quadtree</Name>
+    </ProjectReference>
+    <ProjectReference Include="Octree.csproj">
+      <Project>{2799578F-CF7C-C87F-0865-C0C310F17EC8}</Project>
+      <Name>Octree</Name>
+    </ProjectReference>
+    <ProjectReference Include="LooseQuadtree.csproj">
+      <Project>{A4D0ED28-4B15-205D-CC21-FC2CB0A24E45}</Project>
+      <Name>LooseQuadtree</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="GenerateTargetFrameworkMonikerAttribute" />
