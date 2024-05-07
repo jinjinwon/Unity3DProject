@@ -67,7 +67,7 @@ public class LQNode
 
         foreach (var child in _children)
         {
-            if(child._bounds.Intersects(bounds))
+            if (child._bounds.Intersects(bounds))
             {
                 quads.Add(child);
             }

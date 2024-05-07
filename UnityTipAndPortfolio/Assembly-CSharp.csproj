@@ -976,16 +976,16 @@
       <HintPath>Library\ScriptAssemblies\Unity.VisualScripting.Core.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="UnityEngine.UI">
-      <HintPath>Library\ScriptAssemblies\UnityEngine.UI.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="Unity.VisualScripting.Core.Editor">
       <HintPath>Library\ScriptAssemblies\Unity.VisualScripting.Core.Editor.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Unity.Rider.Editor">
       <HintPath>Library\ScriptAssemblies\Unity.Rider.Editor.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine.UI">
+      <HintPath>Library\ScriptAssemblies\UnityEngine.UI.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UniTask.Linq">
@@ -1073,6 +1073,10 @@
     <ProjectReference Include="Quadtree.csproj">
       <Project>{61B0AB1E-0EBB-A195-536F-9F91BF1A8A70}</Project>
       <Name>Quadtree</Name>
+    </ProjectReference>
+    <ProjectReference Include="Kdtree.csproj">
+      <Project>{D65B9413-3EAF-9334-7E56-82F6EDC0D5B3}</Project>
+      <Name>Kdtree</Name>
     </ProjectReference>
     <ProjectReference Include="Octree.csproj">
       <Project>{2799578F-CF7C-C87F-0865-C0C310F17EC8}</Project>
